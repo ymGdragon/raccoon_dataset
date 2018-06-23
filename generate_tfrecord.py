@@ -81,7 +81,7 @@ def create_tf_example(group, path):
         ymins.append(row['ymin'] / height)
         ymaxs.append(row['ymax'] / height)
         # print(type(row['class']))
-        classes_text.append(str(row['class']).encode('utf8'))
+        classes_text.append(str(row['class']).encode('utf8')) # 原作者没有转换为string,但是我报错了，改过之后OK了
         classes.append(row['class'])
 
     tf_example = tf.train.Example(features=tf.train.Features(feature={
