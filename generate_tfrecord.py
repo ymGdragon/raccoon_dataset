@@ -20,11 +20,15 @@ from PIL import Image
 from object_detection.utils import dataset_util
 from collections import namedtuple, OrderedDict
 
+# 该代码和images文件夹在同级目录下，images里包括两个csv文件和两个图片文件夹，用户可以修改为自己的目录
 flags = tf.app.flags
+
+# 这个生成train.record文件的地址
 # flags.DEFINE_string('csv_input', 'images/train.csv', '1')
 # flags.DEFINE_string('image_dir', 'images/train/', '2')
 # flags.DEFINE_string('output_path', 'train.record', '3')
-# 该代码和images文件夹在同级目录下，images里包括两个csv文件和两个图片文件夹，用户可以修改为自己的目录
+
+# 这个生成test.record文件的地址
 flags.DEFINE_string('csv_input', 'images/test.csv', '1')
 flags.DEFINE_string('image_dir', 'images/test/', '2')
 flags.DEFINE_string('output_path', 'test.record', '3')
