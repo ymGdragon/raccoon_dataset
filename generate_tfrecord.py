@@ -1,11 +1,11 @@
 """
 Usage:
   # From tensorflow/models/
+  # 修改三个地方的目录
   # Create train data:
-  python generate_tfrecord.py --csv_input=data/train_labels.csv  --output_path=train.record
-
+  python generate_tfrecord.py --csv_input=images/train_labels.csv --image_dir=images/train --output_path=train.record
   # Create test data:
-  python generate_tfrecord.py --csv_input=data/test_labels.csv  --output_path=test.record
+  python generate_tfrecord.py --csv_input=images/test_labels.csv  --image_dir=images/test --output_path=test.record
 """
 from __future__ import division
 from __future__ import print_function
@@ -21,15 +21,30 @@ from object_detection.utils import dataset_util
 from collections import namedtuple, OrderedDict
 
 flags = tf.app.flags
-flags.DEFINE_string('csv_input', '', 'Path to the CSV input')
-flags.DEFINE_string('output_path', '', 'Path to output TFRecord')
+# flags.DEFINE_string('csv_input', 'images/train.csv', '1')
+# flags.DEFINE_string('image_dir', 'images/train/', '2')
+# flags.DEFINE_string('output_path', 'train.record', '3')
+# 该代码和images文件夹在同级目录下，images里包括两个csv文件和两个图片文件夹，用户可以修改为自己的目录
+flags.DEFINE_string('csv_input', 'images/test.csv', '1')
+flags.DEFINE_string('image_dir', 'images/test/', '2')
+flags.DEFINE_string('output_path', 'test.record', '3')
 FLAGS = flags.FLAGS
 
 
 # TO-DO replace this with label map
 def class_text_to_int(row_label):
-    if row_label == 'raccoon':
+    if row_label == 'nine':
         return 1
+    elif row_label == 'ten':
+        return 2
+    elif row_label == 'jack':
+        return 3
+    elif row_label == 'queen':
+        return 4
+    elif row_label == 'king':
+        return 5
+    elif row_label == 'ace':
+        return 6
     else:
         None
 
@@ -61,8 +76,9 @@ def create_tf_example(group, path):
         xmaxs.append(row['xmax'] / width)
         ymins.append(row['ymin'] / height)
         ymaxs.append(row['ymax'] / height)
-        classes_text.append(row['class'].encode('utf8'))
-        classes.append(class_text_to_int(row['class']))
+        # print(type(row['class']))
+        classes_text.append(str(row['class']).encode('utf8'))
+        classes.append(row['class'])
 
     tf_example = tf.train.Example(features=tf.train.Features(feature={
         'image/height': dataset_util.int64_feature(height),
@@ -82,8 +98,9 @@ def create_tf_example(group, path):
 
 
 def main(_):
+    print(FLAGS.output_path,'-----')
     writer = tf.python_io.TFRecordWriter(FLAGS.output_path)
-    path = os.path.join(os.getcwd(), 'images')
+    path = os.path.join(os.getcwd(), FLAGS.image_dir)
     examples = pd.read_csv(FLAGS.csv_input)
     grouped = split(examples, 'filename')
     for group in grouped:
